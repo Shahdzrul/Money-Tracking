@@ -1,261 +1,332 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Apple Money Tracker</title>
-
-  <!-- iOS / Apple Web Clip Meta Tags -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Money" />
-  <link rel="apple-touch-icon" href="https://img.icons8.com/sf-ultralight-filled/192/007aff/wallet.png" />
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MY MONEY TRACKER</title>
+<style>
+:root {
+  --bg:#050b17; --panel:#0c192c; --blue:#28baff;
+  --cyan:#75dcff; --text:#edf7ff; --muted:#91a9c2;
+  --green:#42e6a0; --red:#ff718a;
+}
+* {box-sizing:border-box}
+body {
+  margin:0; color:var(--text);
+  font-family:Arial,sans-serif;
+  background:radial-gradient(ellipse at 50% 0%,#12345b 0%,#071326 45%,#030711 100%);
+  min-height:100vh;
+}
+body:before {
+  content:"";position:fixed;inset:0;pointer-events:none;
+  background:linear-gradient(120deg,transparent 35%,#168bff12 50%,transparent 65%);
+  background-size:200% 200%;animation:light 9s linear infinite;
+}
+@keyframes light {
+  from {background-position:200% 0}
+  to {background-position:-200% 0}
+}
+header {
+  padding:24px 5%;display:flex;justify-content:space-between;
+  align-items:center;border-bottom:1px solid #1b4263;
+  background:#071323cc;position:sticky;top:0;z-index:5;
+  backdrop-filter:blur(14px);
+}
+.logo {font-size:20px;font-weight:900;letter-spacing:2px;color:var(--cyan)}
+.online {color:var(--green);font-size:11px}
+main {max-width:1100px;margin:auto;padding:25px 18px 100px}
+h1 {font-size:30px;margin:12px 0 5px}
+.subtitle {color:var(--muted);font-size:13px}
+.balance {
+  margin-top:25px;padding:25px;border-radius:20px;
+  background:linear-gradient(120deg,#102d50,#0b192c);
+  border:1px solid #238bc9;box-shadow:0 0 25px #168bff22;
+}
+.label {color:var(--muted);font-size:12px;letter-spacing:1px}
+.amount {font-size:36px;font-weight:800;margin:12px 0}
+.cards {display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-top:16px}
+.card,.section {
+  background:#0c192c;border:1px solid #1a4162;
+  border-radius:16px;padding:18px;
+}
+.card small {color:var(--muted)}
+.card h2 {font-size:21px;margin:10px 0 0}
+.green {color:var(--green)}
+.red {color:var(--red)}
+nav {
+  display:flex;gap:8px;overflow:auto;margin:25px 0;
+  padding-bottom:5px;
+}
+nav button,.action {
+  border:1px solid #2475a9;background:#10243b;color:var(--cyan);
+  padding:12px 17px;border-radius:12px;cursor:pointer;
+  white-space:nowrap;font-weight:bold;
+}
+nav button.active,.action.primary {
+  background:var(--blue);color:#03101c;border-color:var(--blue);
+}
+.section {margin-top:17px}
+.section-title {
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;flex-wrap:wrap;margin-bottom:15px;
+}
+.section h3 {margin:0;font-size:16px;letter-spacing:1px}
+.transaction {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:14px 0;border-top:1px solid #1b344c;
+}
+.transaction strong {font-size:14px}
+.transaction small {display:block;color:var(--muted);margin-top:5px}
+.transaction .value {font-weight:bold;white-space:nowrap}
+.controls {display:flex;gap:8px;flex-wrap:wrap}
+input,select {
+  width:100%;padding:13px;border-radius:10px;
+  border:1px solid #275477;background:#071426;color:white;
+  outline:none;margin:7px 0;
+}
+button {font:inherit}
+.form-grid {display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.action {margin-top:8px}
+.hidden {display:none}
+.empty {color:var(--muted);text-align:center;padding:25px}
+footer {text-align:center;color:#607c99;font-size:11px;padding:25px}
+@media(max-width:550px) {
+  header {padding:18px 15px}
+  .logo {font-size:16px}
+  h1 {font-size:25px}
+  .amount {font-size:30px}
+  .form-grid {grid-template-columns:1fr}
+}
+</style>
 </head>
-<body class="bg-[#F2F2F7] text-slate-900 min-h-screen pb-12 select-none">
+<body>
+<header>
+  <div class="logo">MY MONEY TRACKER</div>
+  <div class="online">● SYSTEM ONLINE</div>
+</header>
 
-  <!-- Apple Status / Top Bar -->
-  <div class="sticky top-0 z-30 bg-[#F2F2F7]/80 backdrop-blur-md border-b border-black/5 px-5 py-4 flex items-center justify-between">
-    <div>
-      <span class="text-xs uppercase font-medium tracking-wide text-slate-500">Overview</span>
-      <h1 class="text-2xl font-bold tracking-tight text-black">Wallet</h1>
-    </div>
-    <button onclick="exportCSV()" class="text-sm font-semibold text-[#007AFF] hover:opacity-75 transition">
-      Export CSV
-    </button>
+<main>
+  <h1>MANAGE YOUR MONEY.</h1>
+  <div class="subtitle">SMART PERSONAL FINANCE SYSTEM</div>
+
+  <div class="balance">
+    <div class="label">TOTAL BALANCE</div>
+    <div class="amount" id="balance">RM 0.00</div>
+    <div class="subtitle">Your financial overview</div>
   </div>
 
-  <!-- iOS Banner Toast for Shortcut Entries -->
-  <div id="toast" class="hidden mx-4 mt-3 p-3 bg-emerald-500 text-white rounded-xl text-xs font-semibold shadow-lg text-center transition-all duration-300">
-    ⚡ Added automatically via Apple Shortcut!
+  <div class="cards">
+    <div class="card">
+      <small>↗ TOTAL INCOME</small>
+      <h2 class="green" id="income">RM 0.00</h2>
+    </div>
+    <div class="card">
+      <small>↘ TOTAL EXPENSE</small>
+      <h2 class="red" id="expense">RM 0.00</h2>
+    </div>
   </div>
 
-  <div class="max-w-md mx-auto px-4 mt-4 space-y-5">
+  <nav>
+    <button class="active" onclick="showPage('home',this)">Home</button>
+    <button onclick="showPage('transactions',this)">Transactions</button>
+    <button onclick="showPage('add',this)">+ Add</button>
+    <button onclick="showPage('ai',this)">✦ AI Assistant</button>
+  </nav>
 
-    <!-- iOS Summary Widget Card -->
-    <div class="bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-200/50">
-      <div class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Current Balance</div>
-      <div id="balance" class="text-3xl font-extrabold text-slate-900 mt-1">$0.00</div>
-
-      <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-100">
-        <div>
-          <span class="text-xs font-medium text-slate-400">Income</span>
-          <p id="totalIncome" class="text-base font-bold text-emerald-600">+$0.00</p>
-        </div>
-        <div>
-          <span class="text-xs font-medium text-slate-400">Expenses</span>
-          <p id="totalExpense" class="text-base font-bold text-rose-500">-$0.00</p>
-        </div>
+  <div id="home">
+    <div class="section">
+      <div class="section-title">
+        <h3>INCOME LIST</h3>
+        <span class="green">MONEY IN ↗</span>
       </div>
+      <div id="incomeList"></div>
     </div>
-
-    <!-- Quick Add Section -->
-    <div class="bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-200/50">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400">Add Entry</h2>
-        <!-- iOS Segmented Control -->
-        <div class="flex bg-slate-100 rounded-full p-0.5 text-xs font-semibold">
-          <button id="typeExpense" type="button" onclick="setType('expense')" class="px-3 py-1 rounded-full bg-white text-slate-900 shadow-sm transition">Expense</button>
-          <button id="typeIncome" type="button" onclick="setType('income')" class="px-3 py-1 rounded-full text-slate-500 transition">Income</button>
-        </div>
+    <div class="section">
+      <div class="section-title">
+        <h3>EXPENSE LIST</h3>
+        <span class="red">MONEY OUT ↘</span>
       </div>
+      <div id="expenseList"></div>
+    </div>
+  </div>
 
-      <form id="txForm" class="space-y-3">
-        <div class="flex items-center bg-[#F2F2F7] rounded-xl px-4 py-3">
-          <span class="text-xl font-bold text-slate-400 mr-2">$</span>
-          <input type="number" step="0.01" min="0.01" id="amount" placeholder="0.00" required
-            class="w-full bg-transparent text-xl font-bold text-slate-900 focus:outline-none placeholder:text-slate-300" />
+  <div id="transactions" class="hidden">
+    <div class="section">
+      <div class="section-title">
+        <h3>ALL TRANSACTIONS</h3>
+      </div>
+      <input id="search" placeholder="Search transaction..." oninput="render()">
+      <select id="filter" onchange="render()">
+        <option value="All">All transactions</option>
+        <option value="Income">Income only</option>
+        <option value="Expense">Expense only</option>
+      </select>
+      <select id="period" onchange="render()">
+        <option value="All">All time</option>
+        <option value="Day">Today</option>
+        <option value="Week">This week</option>
+        <option value="Month">This month</option>
+        <option value="Year">This year</option>
+      </select>
+      <div id="allList"></div>
+    </div>
+  </div>
+
+  <div id="add" class="hidden">
+    <div class="section">
+      <h3>ADD TRANSACTION</h3>
+      <form id="transactionForm">
+        <select id="type">
+          <option value="Income">Income / Duit Masuk</option>
+          <option value="Expense">Expense / Duit Keluar</option>
+        </select>
+        <div class="form-grid">
+          <div>
+            <label class="subtitle">Amount (RM)</label>
+            <input id="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required>
+          </div>
+          <div>
+            <label class="subtitle">Category</label>
+            <select id="category">
+              <option>Salary</option><option>Side Income</option>
+              <option>Food</option><option>Fuel</option>
+              <option>Bills</option><option>Transport</option>
+              <option>Shopping</option><option>Savings</option>
+              <option>Other</option>
+            </select>
+          </div>
         </div>
-
-        <input type="text" id="desc" placeholder="Note (e.g., Starbucks, Lunch)" required
-          class="w-full bg-[#F2F2F7] rounded-xl px-4 py-3 text-sm focus:outline-none placeholder:text-slate-400" />
-
-        <div class="grid grid-cols-2 gap-2">
-          <select id="category" class="bg-[#F2F2F7] rounded-xl px-3 py-3 text-xs font-medium text-slate-700 focus:outline-none">
-            <option value="Food">🍽️ Food</option>
-            <option value="Transport">🚗 Transport</option>
-            <option value="Shopping">🛍️ Shopping</option>
-            <option value="Bills">🧾 Bills</option>
-            <option value="Salary">💰 Salary</option>
-            <option value="Other">🏷️ Other</option>
-          </select>
-
-          <input type="date" id="date" required
-            class="bg-[#F2F2F7] rounded-xl px-3 py-3 text-xs font-medium text-slate-700 focus:outline-none" />
-        </div>
-
-        <button type="submit" class="w-full mt-2 py-3.5 bg-[#007AFF] active:scale-[0.98] text-white font-semibold rounded-2xl text-sm transition">
-          Log Entry
-        </button>
+        <label class="subtitle">Date</label>
+        <input id="date" type="date" required>
+        <label class="subtitle">Note</label>
+        <input id="note" placeholder="Transaction details...">
+        <button class="action primary" type="submit">SAVE TRANSACTION</button>
       </form>
     </div>
-
-    <!-- History List -->
-    <div>
-      <div class="flex justify-between items-center mb-2 px-1">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Activity</h3>
-        <button onclick="clearAll()" class="text-xs font-semibold text-rose-500 hover:opacity-75">Clear All</button>
-      </div>
-
-      <div id="txList" class="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-200/50 divide-y divide-slate-100">
-        <!-- Rendered items go here -->
-      </div>
-      <p id="emptyNote" class="text-center text-xs text-slate-400 py-8 hidden">No transactions recorded yet.</p>
-    </div>
-
   </div>
 
-  <script>
-    let currentType = 'expense';
-    let transactions = JSON.parse(localStorage.getItem('apple_shortcut_tracker')) || [];
+  <div id="ai" class="hidden">
+    <div class="section">
+      <h3>✦ AI FINANCIAL ASSISTANT</h3>
+      <p class="subtitle">Your personal finance assistant.</p>
+      <input id="question" placeholder="Ask about your money...">
+      <button class="action primary" onclick="askAI()">ASK AI</button>
+      <p class="subtitle" id="aiReply">AI connection belum diaktifkan. Sambungan AI akan dibuat kemudian.</p>
+    </div>
+  </div>
+</main>
 
-    document.getElementById('date').value = new Date().toISOString().split('T')[0];
+<footer>MY MONEY TRACKER · PERSONAL FINANCE SYSTEM</footer>
 
-    function setType(type) {
-      currentType = type;
-      const expBtn = document.getElementById('typeExpense');
-      const incBtn = document.getElementById('typeIncome');
+<script>
+let transactions = JSON.parse(localStorage.getItem("mmt_transactions") || "[]");
 
-      if (type === 'expense') {
-        expBtn.className = 'px-3 py-1 rounded-full bg-white text-slate-900 shadow-sm transition';
-        incBtn.className = 'px-3 py-1 rounded-full text-slate-500 transition';
-      } else {
-        incBtn.className = 'px-3 py-1 rounded-full bg-white text-slate-900 shadow-sm transition';
-        expBtn.className = 'px-3 py-1 rounded-full text-slate-500 transition';
-      }
+const money = n => "RM " + n.toLocaleString("en-MY", {
+  minimumFractionDigits:2, maximumFractionDigits:2
+});
+
+function save() {
+  localStorage.setItem("mmt_transactions", JSON.stringify(transactions));
+}
+
+function showPage(page,button) {
+  ["home","transactions","add","ai"].forEach(id =>
+    document.getElementById(id).classList.toggle("hidden",id!==page)
+  );
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  button.classList.add("active");
+  render();
+}
+
+function makeRow(t) {
+  const row=document.createElement("div");
+  row.className="transaction";
+  const info=document.createElement("div");
+  const name=document.createElement("strong");
+  name.textContent=t.category;
+  const note=document.createElement("small");
+  note.textContent=t.date+" · "+(t.note||t.type);
+  info.append(name,note);
+  const value=document.createElement("div");
+  value.className="value "+(t.type==="Income"?"green":"red");
+  value.textContent=(t.type==="Income"?"+ ":"− ")+money(t.amount);
+  row.append(info,value);
+  return row;
+}
+
+function fillList(id,items) {
+  const el=document.getElementById(id);
+  el.replaceChildren();
+  if(!items.length) {
+    const empty=document.createElement("div");
+    empty.className="empty";
+    empty.textContent="No transactions yet.";
+    el.append(empty);
+  } else items.forEach(t=>el.append(makeRow(t)));
+}
+
+function render() {
+  const incomes=transactions.filter(t=>t.type==="Income");
+  const expenses=transactions.filter(t=>t.type==="Expense");
+  const totalIn=incomes.reduce((s,t)=>s+t.amount,0);
+  const totalOut=expenses.reduce((s,t)=>s+t.amount,0);
+  document.getElementById("balance").textContent=money(totalIn-totalOut);
+  document.getElementById("income").textContent=money(totalIn);
+  document.getElementById("expense").textContent=money(totalOut);
+
+  fillList("incomeList",incomes);
+  fillList("expenseList",expenses);
+
+  const q=(document.getElementById("search").value||"").toLowerCase();
+  const type=document.getElementById("filter").value;
+  const period=document.getElementById("period").value;
+  const now=new Date();
+
+  const filtered=transactions.filter(t=>{
+    const d=new Date(t.date+"T00:00:00");
+    const matchesText=(t.category+" "+t.note).toLowerCase().includes(q);
+    const matchesType=type==="All"||t.type===type;
+    let matchesPeriod=true;
+    if(period==="Day") matchesPeriod=t.date===now.toISOString().slice(0,10);
+    if(period==="Month") matchesPeriod=d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+    if(period==="Year") matchesPeriod=d.getFullYear()===now.getFullYear();
+    if(period==="Week") {
+      const start=new Date(now); start.setDate(now.getDate()-now.getDay());
+      start.setHours(0,0,0,0);
+      matchesPeriod=d>=start&&d<=now;
     }
+    return matchesText&&matchesType&&matchesPeriod;
+  }).sort((a,b)=>b.date.localeCompare(a.date));
+  fillList("allList",filtered);
+}
 
-    function formatMoney(num) {
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
-    }
+document.getElementById("date").value=new Date().toISOString().slice(0,10);
 
-    function saveAndRender() {
-      localStorage.setItem('apple_shortcut_tracker', JSON.stringify(transactions));
+document.getElementById("transactionForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const amount=Number(document.getElementById("amount").value);
+  if(!Number.isFinite(amount)||amount<=0) return alert("Enter a valid amount.");
+  transactions.push({
+    id:Date.now(),
+    type:document.getElementById("type").value,
+    amount,
+    category:document.getElementById("category").value,
+    date:document.getElementById("date").value,
+    note:document.getElementById("note").value.trim()
+  });
+  save();
+  e.target.reset();
+  document.getElementById("date").value=new Date().toISOString().slice(0,10);
+  showPage("home",document.querySelector("nav button"));
+});
 
-      const income = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-      const expense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+function askAI() {
+  document.getElementById("aiReply").textContent=
+    "AI belum disambungkan. Kita akan aktifkan selepas sistem transaksi dan Google Sheets siap.";
+}
 
-      document.getElementById('balance').textContent = formatMoney(income - expense);
-      document.getElementById('totalIncome').textContent = '+' + formatMoney(income);
-      document.getElementById('totalExpense').textContent = '-' + formatMoney(expense);
-
-      const list = document.getElementById('txList');
-      const emptyNote = document.getElementById('emptyNote');
-      list.innerHTML = '';
-
-      if (transactions.length === 0) {
-        emptyNote.classList.remove('hidden');
-        list.classList.add('hidden');
-      } else {
-        emptyNote.classList.add('hidden');
-        list.classList.remove('hidden');
-      }
-
-      transactions.slice().reverse().forEach(tx => {
-        const row = document.createElement('div');
-        row.className = 'flex items-center justify-between p-3.5 hover:bg-slate-50 transition';
-
-        const isInc = tx.type === 'income';
-        const color = isInc ? 'text-emerald-600' : 'text-slate-900';
-        const sign = isInc ? '+' : '-';
-
-        row.innerHTML = `
-          <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-full ${isInc ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-600'} flex items-center justify-center text-sm font-semibold">
-              ${tx.category.slice(0, 2)}
-            </div>
-            <div>
-              <p class="text-sm font-semibold text-slate-900">${tx.desc}</p>
-              <p class="text-[11px] text-slate-400">${tx.category} • ${tx.date}</p>
-            </div>
-          </div>
-          <div class="flex items-center space-x-2">
-            <span class="text-sm font-bold ${color}">${sign}${formatMoney(tx.amount)}</span>
-            <button onclick="removeTx('${tx.id}')" class="text-slate-300 hover:text-rose-500 px-1 text-sm">✕</button>
-          </div>
-        `;
-        list.appendChild(row);
-      });
-    }
-
-    function addTransaction(desc, amount, type, category, date) {
-      transactions.push({
-        id: Date.now().toString(),
-        desc,
-        amount: parseFloat(amount),
-        type,
-        category: category || 'Other',
-        date: date || new Date().toISOString().split('T')[0]
-      });
-      saveAndRender();
-    }
-
-    document.getElementById('txForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      addTransaction(
-        document.getElementById('desc').value.trim(),
-        document.getElementById('amount').value,
-        currentType,
-        document.getElementById('category').value,
-        document.getElementById('date').value
-      );
-      document.getElementById('desc').value = '';
-      document.getElementById('amount').value = '';
-    });
-
-    window.removeTx = function(id) {
-      transactions = transactions.filter(t => t.id !== id);
-      saveAndRender();
-    };
-
-    window.clearAll = function() {
-      if (confirm('Clear all entries?')) {
-        transactions = [];
-        saveAndRender();
-      }
-    };
-
-    window.exportCSV = function() {
-      if (transactions.length === 0) return alert('No records to export');
-      let csv = 'Date,Type,Category,Description,Amount\n';
-      transactions.forEach(t => {
-        csv += `${t.date},${t.type},${t.category},"${t.desc.replace(/"/g, '""')}",${t.amount}\n`;
-      });
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `money_tracker_${new Date().toISOString().split('T')[0]}.csv`;
-      a.click();
-    };
-
-    // Check if opened via Apple Shortcut with URL parameters
-    window.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const amount = urlParams.get('amount');
-      const desc = urlParams.get('desc');
-      const type = urlParams.get('type') || 'expense';
-      const category = urlParams.get('category') || 'Other';
-
-      if (amount && desc) {
-        addTransaction(desc, amount, type, category);
-        const toast = document.getElementById('toast');
-        toast.classList.remove('hidden');
-        setTimeout(() => toast.classList.add('hidden'), 3500);
-
-        // Clean the URL without refreshing
-        window.history.replaceState({}, document.title, window.location.pathname);
-      } else {
-        saveAndRender();
-      }
-    });
-  </script>
+render();
+</script>
 </body>
 </html>
