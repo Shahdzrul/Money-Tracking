@@ -256,7 +256,7 @@ function save() {
 }
 
 function showPage(page,button) {
-  ["home","transactions","add","ai"].forEach(id =>
+  ["home","transactions","add","ai","settings"].forEach(id =>
     document.getElementById(id).classList.toggle("hidden",id!==page)
   );
   document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
