@@ -216,6 +216,30 @@ footer {text-align:center;color:#607c99;font-size:11px;padding:25px}
       <p class="subtitle" id="aiReply">AI connection belum diaktifkan. Sambungan AI akan dibuat kemudian.</p>
     </div>
   </div>
+  
+<div id="settings" class="hidden">
+  <div class="section">
+    <h3>⚙ SYSTEM SETTINGS</h3>
+    <p class="subtitle">Connect your personal Google Spreadsheet.</p>
+
+    <label class="subtitle">Google Apps Script Web App URL</label>
+    <input id="apiUrl" type="url"
+      placeholder="Paste your /exec URL">
+
+    <label class="subtitle">Your Spreadsheet ID</label>
+    <input id="sheetId" type="text"
+      placeholder="Paste your Spreadsheet ID">
+
+    <button class="action primary" onclick="saveSettings()">
+      SAVE SETTINGS
+    </button>
+
+    <p id="connectionStatus" class="subtitle">
+      ● NOT CONNECTED
+    </p>
+  </div>
+</div>
+
 </main>
 
 <footer>MY MONEY TRACKER · PERSONAL FINANCE SYSTEM</footer>
