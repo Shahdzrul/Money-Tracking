@@ -214,6 +214,21 @@ footer {text-align:center;color:#607c99;font-size:11px;padding:25px}
       <input id="question" placeholder="Ask about your money...">
       <button class="action primary" onclick="askAI()">ASK AI</button>
       <p class="subtitle" id="aiReply">AI connection belum diaktifkan. Sambungan AI akan dibuat kemudian.</p>
+      function saveSettings() {
+  const url = document.getElementById("apiUrl").value.trim();
+  const id = document.getElementById("sheetId").value.trim();
+
+  if (!url.endsWith("/exec") || !id) {
+    alert("Sila masukkan URL /exec dan Spreadsheet ID.");
+    return;
+  }
+
+  localStorage.setItem("mmt_api_url", url);
+  localStorage.setItem("mmt_sheet_id", id);
+
+  document.getElementById("connectionStatus").textContent =
+    "● SETTINGS SAVED — CONNECTION NOT TESTED";
+}
     </div>
   </div>
   
