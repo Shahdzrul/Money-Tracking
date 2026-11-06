@@ -214,7 +214,29 @@ footer {text-align:center;color:#607c99;font-size:11px;padding:25px}
       <input id="question" placeholder="Ask about your money...">
       <button class="action primary" onclick="askAI()">ASK AI</button>
       <p class="subtitle" id="aiReply">AI connection belum diaktifkan. Sambungan AI akan dibuat kemudian.</p>
-      function saveSettings() {
+      function saveSettings() {let googleAccessToken = null;
+
+function connectGoogle() {
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: "MASUKKAN_CLIENT_ID_KAU_DI_SINI",
+    scope: "https://www.googleapis.com/auth/spreadsheets",
+    callback: (response) => {
+      if (response.error) {
+        alert("Google connection failed: " + response.error);
+        return;
+      }
+
+      googleAccessToken = response.access_token;
+
+      document.getElementById("connectionStatus").textContent =
+        "● GOOGLE ACCOUNT CONNECTED";
+
+      alert("Google account berjaya disambungkan!");
+    }
+  });
+
+  client.requestAccessToken();
+}
   const url = document.getElementById("apiUrl").value.trim();
   const id = document.getElementById("sheetId").value.trim();
 
