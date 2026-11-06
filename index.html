@@ -343,8 +343,64 @@ function render() {
 
 document.getElementById("date").value=new Date().toISOString().slice(0,10);
 
-document.getElementById("transactionForm").addEventListener("submit",e=>{
+
+document.getElementById("transactionForm").addEventListener("submit", async e => {
   e.preventDefault();
+
+  const amount = Number(document.getElementById("amount").value);
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return alert("Enter a valid amount.");
+  }
+
+  const transaction = {
+    id: Date.now(),
+    type: document.getElementById("type").value,
+    amount,
+    category: document.getElementById("category").value,
+    date: document.getElementById("date").value,
+    note: document.getElementById("note").value.trim()
+  };
+
+  transactions.push(transaction);
+  save();
+  render();
+
+  const apiUrl = localStorage.getItem("mmt_api_url");
+  const sheetId = localStorage.getItem("mmt_sheet_id");
+
+  if (apiUrl && sheetId) {
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        body: JSON.stringify({
+          spreadsheetId: sheetId,
+          type: transaction.type,
+          amount: transaction.amount,
+          category: transaction.category,
+          date: transaction.date,
+          note: transaction.note
+        })
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        alert("Google Sheets: " + result.message);
+        return;
+      }
+
+      alert("Transaction saved to Google Sheets!");
+    } catch (error) {
+      alert("Google Sheets connection failed. Local transaction is still saved.");
+    }
+  } else {
+    alert("Transaction saved locally. Google Sheets is not configured.");
+  }
+
+  e.target.reset();
+  document.getElementById("date").value = new Date().toISOString().slice(0,10);
+});
+
   const amount=Number(document.getElementById("amount").value);
   if(!Number.isFinite(amount)||amount<=0) return alert("Enter a valid amount.");
   transactions.push({
